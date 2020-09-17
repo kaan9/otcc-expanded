@@ -1,4 +1,7 @@
 #include <stdio.h>
+
+#define ALLOC_LEN 99999
+
 FILE *f; /* f (formerly Q) was an int which works fine on 32-bit 386 but can lose info on other systems */
 int ch; /* should this be a char? */
 char *D, *R; 
@@ -9,7 +12,7 @@ E(e)
 	*(char*)D++ = e;
 }
 
-o()
+o()	/* eat? */
 {
 	if (L) {
 		ch = *(char*)L++;
@@ -17,11 +20,13 @@ o()
 			L = 0;
 			ch = W;
 		}
-	} else
+	} else {
 		ch = fgetc(f);
+		printf("ch = %c -- %x\n", ch, ch);
+	}
 }
 
-ch_is_name()
+ch_is_id()
 {
 	return isalnum(ch) | ch == '_';
 }
@@ -59,10 +64,10 @@ ad()
 	}
 	C = 0;
 	d = ch;
-	if (ch_is_name()) {
+	if (ch_is_id()) {
 		E(' ');
 		M = D;
-		while (ch_is_name()) {
+		while (ch_is_id()) {
 			E(ch);
 			o();
 		}
@@ -184,9 +189,9 @@ T(j)
 {
 	int g, e, m, aa;
 	g = 1;
-	if (d == 34) {
+	if (d == '\"') {
 		H(v);
-		while (ch != 34) {
+		while (ch != '\"') {
 			Y();
 			*(char*)v++ = ch;
 			o();
@@ -205,19 +210,19 @@ T(j)
 		} else if (aa == 2) {
 			T(0);
 			s(185, 0);
-			if (e == 33)
+			if (e == '!')
 				Z(m);
 			else
 				ae(m);
-		} else if (e == 40) {
+		} else if (e == '(') {
 			w();
 			ad();
-		} else if (e == 42) {
+		} else if (e == '*') {
 			ad();
 			e = d;
 			ad();
 			ad();
-			if (d == 42) {
+			if (d == '*') {
 				ad();
 				ad();
 				ad();
@@ -226,7 +231,7 @@ T(j)
 			}
 			ad();
 			T(0);
-			if (d == 61) {
+			if (d == '=') {
 				ad();
 				ae(80);
 				w();
@@ -239,18 +244,18 @@ T(j)
 					ae(48655);
 				q++;
 			}
-		} else if (e == 38) {
-			N(10, *(int*)d);
+		} else if (e == '&') {
+			N(10, *(int*)d); /* 10 == '\n' ? */
 			ad();
 		} else {
 			g = *(int*)e;
 			if (!g)
 				g = dlsym(0, M);
-			if (d == 61 & j) {
+			if (d == '=' & j) {
 				ad();
 				w();
 				N(6, g);
-			} else if (d != 40) {
+			} else if (d != '(') {
 				N(8, g);
 				if (C == 11) {
 					N(0, g);
@@ -260,16 +265,16 @@ T(j)
 			}
 		}
 	}
-	if (d == 40) {
+	if (d == '(') {
 		if (g == 1)
 			ae(80);
 		m = s(60545, 0);
 		ad();
 		j = 0;
-		while (d != 41) {
+		while (d != ')') {
 			w();
 			s(2393225, j);
-			if (d == 44)
+			if (d == ',')
 				ad();
 			j = j + 4;
 		}
@@ -312,7 +317,7 @@ O(j)
 					Z(e);
 				} else {
 					ae(e);
-					if (g == 37)
+					if (g == '%') /* originally 37 */
 						ae(146);
 				}
 			}
@@ -411,7 +416,7 @@ ab(j)
 	while (d == 256 | d != -1 & !j) {
 		if (d == 256) {
 			ad();
-			while (d != 59) {
+			while (d != ';') {
 				if (j) {
 					G = G + 4;
 					*(int*)d = -G;
@@ -420,7 +425,7 @@ ab(j)
 					v = v + 4;
 				}
 				ad();
-				if (d == 44)
+				if (d == ',')
 					ad();
 			}
 			ad();
@@ -458,13 +463,13 @@ main(int argc, char **argv)
 		f = fopen(*argv, "r");
 	}
 	puts("what2\n");
-	D = strcpy(R = calloc(1, 99999),
+	D = strcpy(R = calloc(1, ALLOC_LEN),
 		" int if else while break return for define main ")
 		+ 48;
 	puts("what3\n");
-	v = calloc(1, 99999);
-	q = ac = calloc(1, 99999);
-	P = calloc(1, 99999);
+	v = calloc(1, ALLOC_LEN);
+	q = ac = calloc(1, ALLOC_LEN);
+	P = calloc(1, ALLOC_LEN);
 	puts("what4\n");
 	o();
 	puts("what5\n");
