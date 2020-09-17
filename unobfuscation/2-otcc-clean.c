@@ -1,7 +1,8 @@
 #include <stdio.h>
 FILE *f; /* f (formerly Q) was an int which works fine on 32-bit 386 but can lose info on other systems */
 int ch; /* should this be a char? */
-int d, z, C, P, K, ac, q, G, v, R, D, L, W, M;
+char *D, *R; 
+long v, q, ac, P, d, z, C, K, G, L, W, M;
 
 E(e)
 {
@@ -458,8 +459,8 @@ main(int argc, char **argv)
 	}
 	puts("what2\n");
 	D = strcpy(R = calloc(1, 99999),
-		   " int if else while break return for define main ") +
-	    48;
+		" int if else while break return for define main ")
+		+ 48;
 	puts("what3\n");
 	v = calloc(1, 99999);
 	q = ac = calloc(1, 99999);
