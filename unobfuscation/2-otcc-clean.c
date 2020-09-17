@@ -1,6 +1,6 @@
 #include <stdio.h>
-
-int d, z, C, h, P, K, ac, q, G, v, Q, R, D, L, W, M;
+FILE *f; /* f (formerly Q) was an int which works fine on 32-bit 386 but can lose info on other systems */
+int d, z, C, h, P, K, ac, q, G, v, R, D, L, W, M;
 
 E(e)
 {
@@ -16,7 +16,7 @@ o()
 			h = W;
 		}
 	} else
-		h = fgetc(Q);
+		h = fgetc(f);
 }
 
 X()
@@ -449,10 +449,10 @@ ab(j)
 
 main(g, e)
 {
-	Q = stdin;
+	f = stdin;
 	if (g-- > 1) {
 		e = e + 4;
-		Q = fopen(*(int*)e, "r");
+		f = fopen(*(int*)e, "r");
 	}
 	D = strcpy(R = calloc(1, 99999),
 		   " int if else while break return for define main ") +
