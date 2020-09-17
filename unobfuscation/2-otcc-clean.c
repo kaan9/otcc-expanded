@@ -1,6 +1,7 @@
 #include <stdio.h>
 FILE *f; /* f (formerly Q) was an int which works fine on 32-bit 386 but can lose info on other systems */
-int d, z, C, h, P, K, ac, q, G, v, R, D, L, W, M;
+int ch; /* should this be a char? */
+int d, z, C, P, K, ac, q, G, v, R, D, L, W, M;
 
 E(e)
 {
@@ -10,34 +11,34 @@ E(e)
 o()
 {
 	if (L) {
-		h = *(char*)L++;
-		if (h == 2) {
+		ch = *(char*)L++;
+		if (ch == 2) {
 			L = 0;
-			h = W;
+			ch = W;
 		}
 	} else
-		h = fgetc(f);
+		ch = fgetc(f);
 }
 
-X()
+ch_is_name()
 {
-	return isalnum(h) | h == 95;
+	return isalnum(ch) | ch == '_';
 }
 
 Y()
 {
-	if (h == 92) {
+	if (ch == '\\') {
 		o();
-		if (h == 110)
-			h = 10;
+		if (ch == 'n')
+			ch = '\n';
 	}
 }
 
 ad()
 {
 	int e, j, m;
-	while (isspace(h) | h == 35) {
-		if (h == 35) {
+	while (isspace(ch) | ch == 35) {
+		if (ch == 35) {
 			o();
 			ad();
 			if (d == 536) {
@@ -46,22 +47,22 @@ ad()
 				*(int*)d = 1;
 				*(int*)(d + 4) = D;
 			}
-			while (h != 10) {
-				E(h);
+			while (ch != 10) {
+				E(ch);
 				o();
 			}
-			E(h);
+			E(ch);
 			E(2);
 		}
 		o();
 	}
 	C = 0;
-	d = h;
-	if (X()) {
+	d = ch;
+	if (ch_is_name()) {
 		E(32);
 		M = D;
-		while (X()) {
-			E(h);
+		while (ch_is_name()) {
+			E(ch);
 			o();
 		}
 		if (isdigit(d)) {
@@ -76,7 +77,7 @@ ad()
 				d = P + d;
 				if (*(int*)d == 1) {
 					L = *(int*)(d + 4);
-					W = h;
+					W = ch;
 					o();
 					ad();
 				}
@@ -87,17 +88,17 @@ ad()
 		if (d == 39) {
 			d = 2;
 			Y();
-			z = h;
+			z = ch;
 			o();
 			o();
-		} else if (d == 47 & h == 42) {
+		} else if (d == 47 & ch == 42) {
 			o();
-			while (h) {
-				while (h != 42)
+			while (ch) {
+				while (ch != 42)
 					o();
 				o();
-				if (h == 47)
-					h = 0;
+				if (ch == 47)
+					ch = 0;
 			}
 			o();
 			ad();
@@ -108,8 +109,8 @@ ad()
 				z = 0;
 				while ((C = *(char*)e++ - 98) < 0)
 					z = z * 64 + C + 64;
-				if (j == d & (m == h | m == 64)) {
-					if (m == h) {
+				if (j == d & (m == ch | m == 64)) {
+					if (m == ch) {
 						o();
 						d = 1;
 					}
@@ -184,9 +185,9 @@ T(j)
 	g = 1;
 	if (d == 34) {
 		H(v);
-		while (h != 34) {
+		while (ch != 34) {
 			Y();
-			*(char*)v++ = h;
+			*(char*)v++ = ch;
 			o();
 		}
 		*(char*)v = 0;
@@ -447,22 +448,29 @@ ab(j)
 	}
 }
 
-main(g, e)
+main(int argc, char **argv)
 {
 	f = stdin;
-	if (g-- > 1) {
-		e = e + 4;
-		f = fopen(*(int*)e, "r");
+	puts("what1\n");
+	if (argc-- > 1) {
+		argv++;
+		f = fopen(*argv, "r");
 	}
+	puts("what2\n");
 	D = strcpy(R = calloc(1, 99999),
 		   " int if else while break return for define main ") +
 	    48;
+	puts("what3\n");
 	v = calloc(1, 99999);
 	q = ac = calloc(1, 99999);
 	P = calloc(1, 99999);
+	puts("what4\n");
 	o();
+	puts("what5\n");
 	ad();
+	puts("what6\n");
 	ab(0);
-	return (*(int (*)()) * (int*)(P + 592))(g, e);
+	puts("what7\n");
+	return (*(int (*)()) * (int*)(P + 592))(argc, argv);
 }
 
