@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define ALLOC_LEN 99999
 
@@ -47,7 +48,7 @@ ad()
 		if (ch == '#') { /* handle preprocessor directive? */
 			o();
 			ad();
-			if (d == 536) {
+			if (d == 0x218) {
 				ad();
 				E(32);
 				*(int*)d = 1;
@@ -78,8 +79,8 @@ ad()
 			*(char*)D = ' ';
 			d = strstr(R, M - 1) - R;
 			*(char*)D = 0;
-			d = d * 8 + 256;
-			if (d > 536) {
+			d = d * 8 + 0x100;
+			if (d > 0x218) {
 				d = P + d;
 				if (*(int*)d == 1) {
 					L = *(int*)(d + 4);
@@ -113,9 +114,9 @@ ad()
 			while (j = *(char*)e++) {
 				m = *(char*)e++;
 				z = 0;
-				while ((C = *(char*)e++ - 98) < 0)
+				while ((C = *(char*)e++ - 'b') < 0)
 					z = z * 64 + C + 64;
-				if (j == d & (m == ch | m == 64)) {
+				if (j == d & (m == ch | m == 64)) { /* 64 == @ ? */
 					if (m == ch) {
 						o();
 						d = 1;
@@ -156,33 +157,33 @@ s(g, e)
 
 H(e)
 {
-	s(184, e);
+	s(0xb8, e);
 }
 
 B(e)
 {
-	return s(233, e);
+	return s(0xe9, e);
 }
 
 S(j, e)
 {
-	ae(1032325);
-	return s(132 + j, e);
+	ae(0x0fc085); /* is this an instruction? */
+	return s(0x84 + j, e);
 }
 
 Z(e)
 {
-	ae(49465);
+	ae(0xc139); 
 	H(0);
-	ae(15);
-	ae(e + 144);
-	ae(192);
+	ae(0x0f);
+	ae(e + 0x90);
+	ae(0xc0);
 }
 
 N(j, e)
 {
-	ae(j + 131);
-	s((e < 512) << 7 | 5, e);
+	ae(j + 0x83);
+	s((e < 0x200) << 7 | 5, e);
 }
 
 T(j)
@@ -236,12 +237,12 @@ T(j)
 				ae(80);
 				w();
 				ae(89);
-				ae(392 + (e == 256));
+				ae(392 + (e == 0x100));
 			} else if (e) {
-				if (e == 256)
+				if (e == 0x100)
 					ae(139);
 				else
-					ae(48655);
+					ae(0xbe0f);
 				q++;
 			}
 		} else if (e == '&') {
@@ -268,12 +269,12 @@ T(j)
 	if (d == '(') {
 		if (g == 1)
 			ae(80);
-		m = s(60545, 0);
+		m = s(0xec81, 0);
 		ad();
 		j = 0;
 		while (d != ')') {
 			w();
-			s(2393225, j);
+			s(0x248489, j);
 			if (d == ',')
 				ad();
 			j = j + 4;
@@ -282,15 +283,15 @@ T(j)
 		ad();
 		if (!g) {
 			e = e + 4;
-			*(int*)e = s(232, *(int*)e);
+			*(int*)e = s(0xe8, *(int*)e);
 		} else if (g == 1) {
-			s(2397439, j);
+			s(0x2494ff, j);
 			j = j + 4;
 		} else {
-			s(232, g - q - 5);
+			s(0xe8, g - q - 5);
 		}
 		if (j)
-			s(50305, j);
+			s(0xc481, j);
 	}
 }
 
@@ -346,13 +347,13 @@ U()
 I(j)
 {
 	int m, g, e;
-	if (d == 288) {
+	if (d == 0x120) {
 		ad();
 		ad();
 		m = U();
 		ad();
 		I(j);
-		if (d == 312) {
+		if (d == 0x138) {
 			ad();
 			g = B(0);
 			A(m);
@@ -361,11 +362,11 @@ I(j)
 		} else {
 			A(m);
 		}
-	} else if (d == 352 | d == 504) {
+	} else if (d == 0x160 | d == 0x1f8) {
 		e = d;
 		ad();
 		ad();
-		if (e == 352) {
+		if (e == 0x160) {
 			g = q;
 			m = U();
 		} else {
@@ -389,19 +390,19 @@ I(j)
 		I(&m);
 		B(g - q - 5);
 		A(m);
-	} else if (d == 123) {
+	} else if (d == '{') {
 		ad();
 		ab(1);
-		while (d != 125)
+		while (d != '}')
 			I(j);
 		ad();
 	} else {
-		if (d == 448) {
+		if (d == 0x1c0) {
 			ad();
 			if (d != ';')
 				w();
 			K = B(K);
-		} else if (d == 400) {
+		} else if (d == 0x190) {
 			ad();
 			*(int*)j = B(*(int*)j);
 		} else if (d != ';')
@@ -413,8 +414,8 @@ I(j)
 ab(j)
 {
 	int m;
-	while (d == 256 | d != -1 & !j) {
-		if (d == 256) {
+	while (d == 0x100 | d != -1 & !j) {
+		if (d == 0x100) {
 			ad();
 			while (d != ';') {
 				if (j) {
@@ -444,11 +445,11 @@ ab(j)
 			}
 			ad();
 			K = G = 0;
-			ae(15042901);
-			m = s(60545, 0);
+			ae(0xe58955); /*more instructions? */
+			m = s(0xec81, 0);
 			I(0);
 			A(K);
-			ae(50121);
+			ae(0xc3c9);
 			*(int*)m = G;
 		}
 	}
